@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   // standalone output: next build additionally emits .next/standalone (minimal server.js + nft-traced dependency subset),
   // used by the Electron main process to fork-start the server without requiring npm install on the user's machine. Does not affect next dev.
   output: "standalone",
