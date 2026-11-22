@@ -69,6 +69,32 @@ const exampleProductsByLocale: Record<Locale, ExampleProduct[]> = {
       image: "/examples/tissue.png",
     },
   ],
+  vi: [
+    {
+      id: "ex-juicer",
+      name: "Máy xay sinh tố cầm tay",
+      category: "tech",
+      sellingPoints: "Sạc pin USB tiện lợi mang theo, chỉ 30 giây có ngay ly nước ép tươi; lưỡi dao 6 cánh xay đá nhuyễn mịn, tiện dùng tại văn phòng, phòng gym, đi công tác; cối xay dễ vệ sinh, rửa sạch không tốn sức.",
+      price: "129",
+      image: "/examples/juicer.png",
+    },
+    {
+      id: "ex-coffee",
+      name: "Cà phê Cold Brew đậm đặc",
+      category: "food",
+      sellingPoints: "0 đường 0 béo, pha nhanh chỉ trong 3 giây; uống nóng hay lạnh đều ngon, pha cùng nước lọc hoặc sữa tươi; gói nhỏ tiện lợi mang theo, phù hợp dân văn phòng nạp năng lượng và người tập gym kiểm soát đường.",
+      price: "59",
+      image: "/examples/coffee.png",
+    },
+    {
+      id: "ex-tissue",
+      name: "Khăn giấy lụa rút siêu dày",
+      category: "home",
+      sellingPoints: "Dày 3 lớp cao cấp, nhúng nước không rách không vụn mủn; 100% bột gỗ nguyên sinh êm dịu cho da, dùng an toàn cho mẹ và bé; mua cả thùng siêu tiết kiệm, tiện lợi cho gia đình, xe hơi và văn phòng.",
+      price: "39",
+      image: "/examples/tissue.png",
+    },
+  ],
 };
 
 // Reference script structures (high-conversion commerce shot templates, used for the "showcase" display and new-user reference)
@@ -177,6 +203,53 @@ const exampleTemplatesByLocale: Record<Locale, ExampleTemplate[]> = {
       ],
     },
   ],
+  vi: [
+    {
+      id: "tpl-pain",
+      name: "Khai thác nỗi đau · 3 giây vàng",
+      styleType: "pain_point",
+      styleLabel: "Khai thác nỗi đau",
+      description: "Mở đầu 3 giây nêu bật nỗi đau thu hút ánh nhìn, khuếch đại tình huống đồng cảm, đưa ra giải pháp từ sản phẩm và chốt đơn ưu đãi có hạn. Cấu trúc bán hàng phổ biến nhất.",
+      totalDuration: 28,
+      shots: [
+        { shotId: 1, type: "hook", duration: 3, description: "Góc quay ngôi thứ nhất cắt cảnh nhanh, đặt câu hỏi trúng nỗi đau", camera: "Cầm tay bám theo", visualSource: "ai_generate", transition: "ai_start_end", voiceover: "Bạn có đang phát ngấy với ___ không?", prompt: "" },
+        { shotId: 2, type: "pain_point", duration: 5, description: "Khuếch đại tình huống khó chịu trước khi dùng sản phẩm", camera: "Cận cảnh", visualSource: "ai_generate", transition: "ai_start_end", voiceover: "Lần nào cũng ___, thực sự quá khó chịu", prompt: "" },
+        { shotId: 3, type: "product_reveal", duration: 4, description: "Sản phẩm xuất hiện, đẩy máy chậm vào bao bì", camera: "Đẩy máy chậm", visualSource: "product_image", transition: "ai_start_end", voiceover: "Cho đến khi tôi biết tới sản phẩm này", prompt: "" },
+        { shotId: 4, type: "demo", duration: 8, description: "Trình diễn trực quan đặc điểm nổi bật và hiệu quả thực tế", camera: "Toàn cảnh vừa", visualSource: "ai_generate", transition: "ai_start_end", voiceover: "Nhìn xem, ___, hoàn toàn giải quyết được vấn đề", prompt: "" },
+        { shotId: 5, type: "cta", duration: 3, description: "Sản phẩm + giá bán + giỏ hàng, thôi thúc đặt hàng", camera: "Cố định", visualSource: "product_image", transition: "direct_concat", voiceover: "Ưu đãi có hạn, nhanh tay đặt ngay kẻo lỡ!", prompt: "" },
+      ],
+    },
+    {
+      id: "tpl-compare",
+      name: "So sánh đánh giá · Đặt lên bàn cân",
+      styleType: "comparison",
+      styleLabel: "So sánh đánh giá",
+      description: "Đặt nhiều sản phẩm cạnh nhau, dùng thử nghiệm thực tế làm nổi bật ưu thế của sản phẩm, củng cố bằng số lượng bán và đánh giá tốt. Phù hợp sản phẩm cần quyết định lý tính.",
+      totalDuration: 30,
+      shots: [
+        { shotId: 1, type: "hook", duration: 3, description: "Nhiều sản phẩm xếp cạnh nhau, tạo sự tò mò muốn xem đánh giá", camera: "Góc nhìn trên xuống", visualSource: "ai_generate", transition: "ai_start_end", voiceover: "Đã chi ___ để test thử 5 loại, xem loại nào đáng tiền nhất", prompt: "" },
+        { shotId: 2, type: "demo", duration: 9, description: "Lần lượt so sánh kiểm tra các chỉ số cốt lõi", camera: "Cận cảnh so sánh", visualSource: "ai_generate", transition: "ai_start_end", voiceover: "Loại đầu tiên không ổn… loại này lại xịn thế này sao?", prompt: "" },
+        { shotId: 3, type: "product_reveal", duration: 4, description: "Sản phẩm của chúng ta vượt trội, cận cảnh chi tiết", camera: "Đẩy máy", visualSource: "product_image", transition: "ai_start_end", voiceover: "Và người chiến thắng cuối cùng chính là em này", prompt: "" },
+        { shotId: 4, type: "social_proof", duration: 6, description: "Số liệu bán hàng và phản hồi tích cực từ người dùng", camera: "Cố định", visualSource: "ai_generate", transition: "ai_start_end", voiceover: "Hơn 100.000 lượt bán mỗi tháng, đánh giá tích cực 99%", prompt: "" },
+        { shotId: 5, type: "cta", duration: 3, description: "Hướng dẫn đặt hàng và thông tin quà tặng kèm", camera: "Cố định", visualSource: "product_image", transition: "direct_concat", voiceover: "Link ngay trong giỏ hàng, đặt hôm nay còn được tặng kèm quà tặng", prompt: "" },
+      ],
+    },
+    {
+      id: "tpl-story",
+      name: "Tình huống câu chuyện · Trải nghiệm nhập vai",
+      styleType: "story",
+      styleLabel: "Kịch bản câu chuyện",
+      description: "Gói sản phẩm vào câu chuyện ngắn lôi cuốn — cảm xúc đi trước, tính năng sản phẩm lồng ghép tự nhiên. Rất hợp mỹ phẩm, thực phẩm và các ngành hàng cảm tính.",
+      totalDuration: 26,
+      shots: [
+        { shotId: 1, type: "hook", duration: 3, description: "Nhân vật chính xuất hiện, tạo mở đầu kịch tính bất ngờ", camera: "Chính diện vừa", visualSource: "ai_generate", transition: "ai_start_end", voiceover: "Hôm đó đã xảy ra một chuyện cực kỳ ngượng ngùng", prompt: "" },
+        { shotId: 2, type: "pain_point", duration: 5, description: "Tình huống ngượng ngùng / bối rối trong câu chuyện", camera: "Cận cảnh", visualSource: "ai_generate", transition: "ai_start_end", voiceover: "Lúc đó tôi chỉ ước có cái lỗ nẻ nào để chui xuống", prompt: "" },
+        { shotId: 3, type: "product_reveal", duration: 3, description: "Sản phẩm xuất hiện như nút thắt cứu cánh", camera: "Cận cảnh", visualSource: "product_image", transition: "ai_start_end", voiceover: "May mà trong túi có sẵn em này", prompt: "" },
+        { shotId: 4, type: "demo", duration: 7, description: "Sau khi dùng, tình huống đảo ngược và hiệu quả ấn tượng", camera: "Toàn cảnh vừa", visualSource: "ai_generate", transition: "ai_start_end", voiceover: "Dùng xong một cái là tự tin hẳn lên", prompt: "" },
+        { shotId: 5, type: "cta", duration: 3, description: "Kết thúc kêu gọi và thôi thúc mua ngay", camera: "Cố định", visualSource: "product_image", transition: "direct_concat", voiceover: "Các bạn ơi, nhanh tay rinh về ngay nhé!", prompt: "" },
+      ],
+    },
+  ],
 };
 
 // Homepage "Example Showcase": a complete viewable sample (script structure + pre-composed demo clip)
@@ -229,6 +302,24 @@ const exampleShowcaseByLocale: Record<Locale, ExampleShowcase> = {
       { shotId: 2, type: "demo", duration: 5, description: "Water-absorption demo — won't tear when wet", camera: "Top-down close-up", visualSource: "ai_generate", transition: "ai_start_end", voiceover: "Thick 3-ply — won't tear even when wet", prompt: "" },
       { shotId: 3, type: "product_reveal", duration: 4, description: "Macro close-up of the tissue texture", camera: "Macro push-in", visualSource: "ai_generate", transition: "ai_start_end", voiceover: "Virgin wood pulp — gentle, no lint", prompt: "" },
       { shotId: 4, type: "cta", duration: 4, description: "Warm family use scene", camera: "Static", visualSource: "product_image", transition: "direct_concat", voiceover: "Buy by the case for the best value — grab it!", prompt: "" },
+    ],
+  },
+  vi: {
+    id: "showcase-tissue",
+    title: "Khăn giấy lụa rút siêu dày · Khai thác nỗi đau",
+    productName: "Khăn giấy lụa rút siêu dày",
+    category: "Đồ gia dụng",
+    styleLabel: "Khai thác nỗi đau",
+    totalDuration: 17,
+    resolution: "1080p",
+    aspectRatio: "9:16",
+    cover: "/examples/tissue.png",
+    videoUrl: "/examples/sample-tissue.mp4",
+    shots: [
+      { shotId: 1, type: "hook", duration: 4, description: "Cận cảnh hộp khăn giấy phòng khách, đẩy máy chậm", camera: "Đẩy máy chậm", visualSource: "product_image", transition: "ai_start_end", voiceover: "Bạn vẫn đang dùng loại khăn giấy lau một cái là rách?", prompt: "" },
+      { shotId: 2, type: "demo", duration: 5, description: "Thử nghiệm hút nước — nhúng nước cũng không rách", camera: "Cận cảnh từ trên xuống", visualSource: "ai_generate", transition: "ai_start_end", voiceover: "Dày 3 lớp, nhúng nước cũng không rách", prompt: "" },
+      { shotId: 3, type: "product_reveal", duration: 4, description: "Cận cảnh chi tiết bề mặt khăn giấy mềm mại", camera: "Đẩy máy siêu cận", visualSource: "ai_generate", transition: "ai_start_end", voiceover: "Bột gỗ nguyên sinh, êm ái không vụn mủn", prompt: "" },
+      { shotId: 4, type: "cta", duration: 4, description: "Bối cảnh gia đình ấm cúng sử dụng sản phẩm", camera: "Cố định", visualSource: "product_image", transition: "direct_concat", voiceover: "Mua cả thùng siêu tiết kiệm, chốt đơn ngay!", prompt: "" },
     ],
   },
 };

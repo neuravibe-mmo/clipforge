@@ -277,17 +277,17 @@ export function routeModel(candidates: RouteCandidate[], input: { mode: Generati
 }
 
 export type RecoveryAction = "resume-task" | "adapt-params" | "switch-model" | "neutralize-prompt" | "reduce-inputs" | "repair-media" | "retry-stage" | "configure-provider";
-export interface FailureDiagnosis { code: string; retryable: boolean; actions: RecoveryAction[]; message: { zh: string; en: string } }
+export interface FailureDiagnosis { code: string; retryable: boolean; actions: RecoveryAction[]; message: { zh: string; en: string; vi?: string; [key: string]: string | undefined } }
 
 export function diagnoseGenerationFailure(error: unknown): FailureDiagnosis {
   const msg = (error instanceof Error ? error.message : String(error ?? "")).toLowerCase();
-  if (/task.?id|poll|timeout|timed out|unknown status/.test(msg)) return { code: "paid-task-detached", retryable: true, actions: ["resume-task"], message: { zh: "云端任务可能仍在运行，请继续查询原任务，避免重复扣费", en: "The cloud task may still be running; resume it instead of submitting and paying again" } };
-  if (/duration|resolution|aspect|ratio|unsupported param|invalid param/.test(msg)) return { code: "parameter-conflict", retryable: true, actions: ["adapt-params", "retry-stage"], message: { zh: "参数与模型规格冲突，可自动适配后重试", en: "Parameters conflict with the model contract; adapt them and retry" } };
-  if (/moderation|safety|content policy|审核|敏感/.test(msg)) return { code: "content-policy", retryable: true, actions: ["neutralize-prompt", "retry-stage"], message: { zh: "内容审核拒绝，可保留创作意图并中和高风险措辞", en: "Content policy rejected the request; neutralize risky wording while preserving intent" } };
-  if (/too many|maximum|limit.*image|reference.*limit/.test(msg)) return { code: "input-limit", retryable: true, actions: ["reduce-inputs", "retry-stage"], message: { zh: "参考素材超过模型上限，请减少输入后重试", en: "Reference inputs exceed the model limit; reduce them and retry" } };
-  if (/ffmpeg|ffprobe|codec|damaged|corrupt|invalid data/.test(msg)) return { code: "media-invalid", retryable: false, actions: ["repair-media"], message: { zh: "媒体文件或编码异常，需要修复或替换素材", en: "The media file or codec is invalid; repair or replace the source" } };
-  if (/401|403|api.?key|unauthorized|forbidden/.test(msg)) return { code: "provider-auth", retryable: false, actions: ["configure-provider"], message: { zh: "供应商鉴权失败，请检查 Key、地址和权限", en: "Provider authentication failed; check the key, endpoint, and access" } };
-  return { code: "generation-failed", retryable: true, actions: ["retry-stage", "switch-model"], message: { zh: "当前阶段生成失败，可单独重试或切换备用模型", en: "This stage failed; retry it alone or switch to a fallback model" } };
+  if (/task.?id|poll|timeout|timed out|unknown status/.test(msg)) return { code: "paid-task-detached", retryable: true, actions: ["resume-task"], message: { zh: "云端任务可能仍在运行，请继续查询原任务，避免重复扣费", en: "The cloud task may still be running; resume it instead of submitting and paying again", vi: "Tác vụ đám mây có thể vẫn đang chạy; hãy tiếp tục truy vấn tác vụ cũ để tránh trùng lặp" } };
+  if (/duration|resolution|aspect|ratio|unsupported param|invalid param/.test(msg)) return { code: "parameter-conflict", retryable: true, actions: ["adapt-params", "retry-stage"], message: { zh: "参数与模型规格冲突，可自动适配后重试", en: "Parameters conflict with the model contract; adapt them and retry", vi: "Tham số xung đột với thông số mô hình; có thể tự động điều chỉnh và thử lại" } };
+  if (/moderation|safety|content policy|审核|敏感/.test(msg)) return { code: "content-policy", retryable: true, actions: ["neutralize-prompt", "retry-stage"], message: { zh: "内容审核拒绝，可保留创作意图并中和高风险措辞", en: "Content policy rejected the request; neutralize risky wording while preserving intent", vi: "Nội dung bị từ chối kiểm duyệt; có thể điều chỉnh từ ngữ rủi ro và thử lại" } };
+  if (/too many|maximum|limit.*image|reference.*limit/.test(msg)) return { code: "input-limit", retryable: true, actions: ["reduce-inputs", "retry-stage"], message: { zh: "参考素材超过模型上限，请减少输入后重试", en: "Reference inputs exceed the model limit; reduce them and retry", vi: "Tài nguyên tham khảo vượt giới hạn mô hình; vui lòng giảm bớt và thử lại" } };
+  if (/ffmpeg|ffprobe|codec|damaged|corrupt|invalid data/.test(msg)) return { code: "media-invalid", retryable: false, actions: ["repair-media"], message: { zh: "媒体文件或编码异常，需要修复或替换素材", en: "The media file or codec is invalid; repair or replace the source", vi: "Tệp media hoặc mã hóa bị lỗi; cần sửa hoặc thay thế tư liệu" } };
+  if (/401|403|api.?key|unauthorized|forbidden/.test(msg)) return { code: "provider-auth", retryable: false, actions: ["configure-provider"], message: { zh: "供应商鉴权失败，请检查 Key、地址和权限", en: "Provider authentication failed; check the key, endpoint, and access", vi: "Xác thực nhà cung cấp thất bại; hãy kiểm tra API Key, endpoint và quyền hạn" } };
+  return { code: "generation-failed", retryable: true, actions: ["retry-stage", "switch-model"], message: { zh: "当前阶段生成失败，可单独重试或切换备用模型", en: "This stage failed; retry it alone or switch to a fallback model", vi: "Giai đoạn hiện tại tạo thất bại; có thể thử lại hoặc đổi mô hình dự phòng" } };
 }
 
 export interface SemanticAsset {
@@ -337,14 +337,14 @@ export function buildVersionTree(input: {
   };
 }
 
-export interface RepairAction { checkId: string; stage: WorkflowStageId; action: "recompose" | "remix-audio" | "regenerate-shot" | "replace-media"; automatic: boolean; message: { zh: string; en: string } }
+export interface RepairAction { checkId: string; stage: WorkflowStageId; action: "recompose" | "remix-audio" | "regenerate-shot" | "replace-media"; automatic: boolean; message: { zh: string; en: string; vi?: string; [key: string]: string | undefined } }
 
 export function repairPlanFromQc(report: QcReport): RepairAction[] {
   return report.checks.filter((check) => check.level !== "ok").map((check) => {
-    if (["audio-stream", "silence", "loudness", "true-peak"].includes(check.id)) return { checkId: check.id, stage: "compose", action: "remix-audio", automatic: true, message: { zh: "重新混音并标准化响度", en: "Remix audio and normalize loudness" } } as RepairAction;
-    if (["black", "freeze"].includes(check.id)) return { checkId: check.id, stage: "motion", action: "regenerate-shot", automatic: false, message: { zh: "定位异常时间段并重做对应动态镜头", en: "Locate the affected segment and regenerate its motion shot" } } as RepairAction;
-    if (check.id === "resolution" || check.id === "duration") return { checkId: check.id, stage: "compose", action: "recompose", automatic: true, message: { zh: "按目标规格重新合成", en: "Recompose using the target output contract" } } as RepairAction;
-    return { checkId: check.id, stage: "keyframes", action: "replace-media", automatic: false, message: { zh: "替换异常素材后从当前阶段继续", en: "Replace the faulty asset and resume from this stage" } } as RepairAction;
+    if (["audio-stream", "silence", "loudness", "true-peak"].includes(check.id)) return { checkId: check.id, stage: "compose", action: "remix-audio", automatic: true, message: { zh: "重新混音并标准化响度", en: "Remix audio and normalize loudness", vi: "Mix lại âm thanh và chuẩn hóa âm lượng" } } as RepairAction;
+    if (["black", "freeze"].includes(check.id)) return { checkId: check.id, stage: "motion", action: "regenerate-shot", automatic: false, message: { zh: "定位异常时间段并重做对应动态镜头", en: "Locate the affected segment and regenerate its motion shot", vi: "Xác định đoạn bất thường và tạo lại cảnh chuyển động tương ứng" } } as RepairAction;
+    if (check.id === "resolution" || check.id === "duration") return { checkId: check.id, stage: "compose", action: "recompose", automatic: true, message: { zh: "按目标规格重新合成", en: "Recompose using the target output contract", vi: "Tổng hợp lại video theo thông số mục tiêu" } } as RepairAction;
+    return { checkId: check.id, stage: "keyframes", action: "replace-media", automatic: false, message: { zh: "替换异常素材后从当前阶段继续", en: "Replace the faulty asset and resume from this stage", vi: "Thay thế tài nguyên lỗi và tiếp tục từ giai đoạn hiện tại" } } as RepairAction;
   });
 }
 

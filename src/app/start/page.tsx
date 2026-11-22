@@ -83,6 +83,15 @@ export default function StartPage() {
   const [images, setImages] = useState<PickedImage[]>([]);
   const [productName, setProductName] = useState("");
   const [sellingPoints, setSellingPoints] = useState("");
+  const sellingPointsRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-resize selling points textarea to fit content height
+  useEffect(() => {
+    if (sellingPointsRef.current) {
+      sellingPointsRef.current.style.height = "auto";
+      sellingPointsRef.current.style.height = `${sellingPointsRef.current.scrollHeight}px`;
+    }
+  }, [sellingPoints]);
   const [topic, setTopic] = useState("");
   const [link, setLink] = useState("");
   const [isDragging, setIsDragging] = useState(false);
@@ -623,12 +632,30 @@ export default function StartPage() {
                   </button>)}
                 </div>
                 <div className="cf-fields">
-                <label className="cf-field"><span>{t("productField")}</span>
-                  <input className="cf-input" required value={productName} onChange={(e) => setProductName(e.target.value)} placeholder={t("productNamePlaceholder")} />
-                </label>
-                <label className="cf-field"><span>{t("pointsField")} <small>{t("optional")}</small></span>
-                  <textarea className="cf-area" value={sellingPoints} onChange={(e) => setSellingPoints(e.target.value)} placeholder={t("sellingPointsPlaceholder")} />
-                </label></div>
+                  <label className="cf-field">
+                    <span>{t("productField")}</span>
+                    <input
+                      className="cf-input"
+                      required
+                      value={productName}
+                      onChange={(e) => setProductName(e.target.value)}
+                      placeholder={t("productNamePlaceholder")}
+                    />
+                  </label>
+                  <label className="cf-field">
+                    <span>{t("pointsField")} <small>{t("optional")}</small></span>
+                    <textarea
+                      ref={sellingPointsRef}
+                      className="cf-area"
+                      value={sellingPoints}
+                      onChange={(e) => {
+                        setSellingPoints(e.target.value);
+                      }}
+                      rows={1}
+                      placeholder={t("sellingPointsPlaceholder")}
+                    />
+                  </label>
+                </div>
               </>
             ) : mode === "link" ? (
               <div className="cf-field" style={{ marginTop: 0 }}>

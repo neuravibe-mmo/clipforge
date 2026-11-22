@@ -50,4 +50,5 @@ const namespaces = {
 export const messages: Record<Locale, Record<string, Record<string, string>>> = {
   zh: Object.fromEntries(Object.entries(namespaces).map(([ns, m]) => [ns, m.zh])),
   en: Object.fromEntries(Object.entries(namespaces).map(([ns, m]) => [ns, m.en])),
+  vi: Object.fromEntries(Object.entries(namespaces).map(([ns, m]) => [ns, m.vi || m.en || m.zh])),
 };

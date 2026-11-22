@@ -48,4 +48,30 @@ export const showcase: NamespaceMessages = {
     templateShotsMeta: "{shots} shots · {duration}s",
     bottomCta: "Try making your own",
   },
+  vi: {
+    // Thanh điều hướng
+    navTitle: "Tác phẩm mẫu",
+    navBadge: "Mẫu",
+    makeSimilar: "Tạo một video tương tự",
+    // Giới thiệu
+    introLead: "Đây là video mẫu được tạo hoàn chỉnh bằng ClipForge: ",
+    introMeta: "{style} · {shots} phân cảnh · {duration}s · {resolution} {aspectRatio}.",
+    introTail: " Dưới đây là video thành phẩm và kịch bản phân cảnh — bạn có thể làm theo để tạo video cho riêng mình.",
+    // Kịch bản
+    scriptTitle: "Kịch bản phân cảnh",
+    // Thẻ loại cảnh
+    shotTypeHook: "Mở đầu (Hook)",
+    shotTypePainPoint: "Nỗi đau",
+    shotTypeProductReveal: "Sản phẩm",
+    shotTypeDemo: "Trình diễn",
+    shotTypeSocialProof: "Bảo chứng",
+    shotTypeCta: "Kêu gọi (CTA)",
+    // Khu vực mẫu tham khảo
+    templatesTitle: "Các cấu trúc kịch bản ăn khách",
+    templatesBadge: "Mẫu",
+    templatesDesc: "Đây là các cấu trúc phổ biến của những video bán hàng có tỷ lệ chuyển đổi cao — chọn một phong cách để áp dụng cho dự án của bạn.",
+    templateShotsMeta: "{shots} phân cảnh · {duration}s",
+    // Nút kêu gọi cuối trang
+    bottomCta: "Thử tự tạo video của riêng bạn",
+  },
 };

@@ -828,8 +828,9 @@ export default function NewProjectPage() {
                   placeholder={t("sellingPointsPlaceholder")}
                   value={sellingPoints}
                   onChange={(e) => setSellingPoints(e.target.value)}
-                  rows={3}
-                  className="bg-muted/30 border-border/50 focus:border-primary resize-none"
+                  rows={2}
+                  style={{ fieldSizing: "content" } as React.CSSProperties}
+                  className="bg-muted/30 border-border/50 focus:border-primary resize-none min-h-[48px]"
                 />
               </div>
 

@@ -11,7 +11,7 @@
     "pnpm": ">=10"
   },
   "scripts": {
-    "dev": "NEXT_DIST_DIR=.next_dev next dev --webpack",
+    "dev": "NEXT_DIST_DIR=.next_dev next dev --webpack -p 3003",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

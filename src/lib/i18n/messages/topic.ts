@@ -92,4 +92,49 @@ export const topic: NamespaceMessages = {
     errorGenerateCheckLlm: "Script generation failed. Check your LLM settings",
     errorGenerate: "Script generation failed",
   },
+  vi: {
+    // Tiêu đề trang
+    heroBadge: "Không cần sản phẩm · Tạo video từ một câu",
+    heroTitle: "Tạo video từ một câu chủ đề",
+    heroSubtitle:
+      "Chỉ cần nhập một chủ đề, AI sẽ tự động viết kịch bản lời bình và tìm ghép tư liệu miễn phí phù hợp — chuyển sang bước Tư liệu và Ghép video để xuất video ngắn dạng dọc chỉ với 1 click. Phù hợp mọi chủ đề, không chỉ giới hạn bán hàng.",
+    // Cảnh báo LLM
+    llmBannerTitle: "Cần cấu hình LLM để tạo kịch bản",
+    llmBannerDesc: "Cần cấu hình dịch vụ LLM (URL / API Key / Model) trong mục Cài đặt.",
+    llmBannerCta: "Bấm để đến Cài đặt →",
+    // Ô nhập chủ đề
+    topicLabel: "Chủ đề trong một câu",
+    topicPlaceholder: "Ví dụ: Cách tự pha một ly cà phê Pour-over tại nhà",
+    tryLabel: "Gợi ý thử:",
+    exampleTopic1: "Cách tự pha một ly cà phê Pour-over tại nhà",
+    exampleTopic2: "Tại sao ngắm cảnh đêm thành phố lại chữa lành đến vậy",
+    exampleTopic3: "Ba thói quen nhỏ giúp buổi sáng tràn đầy năng lượng",
+    exampleTopic4: "Năm điều thú vị nên làm vào một ngày mưa",
+    exampleTopic5: "Tại sao chúng ta luôn hoài niệm về tuổi thơ",
+    // Phong cách lời bình
+    narrationLabel: "Phong cách lời bình",
+    narration_knowledge_label: "Kiến thức đời sống",
+    narration_knowledge_desc: "Giải thích rõ ràng một chủ đề, mở mang kiến thức",
+    narration_story_label: "Câu chuyện cảm xúc",
+    narration_story_desc: "Lời kể truyền cảm, tạo sự đồng cảm sâu sắc",
+    narration_lifestyle_label: "Phong cách sống",
+    narration_lifestyle_desc: "Lời bình vlog tinh tế, giàu cảm xúc",
+    narration_inspiration_label: "Thông điệp truyền cảm hứng",
+    narration_inspiration_desc: "Tiết tấu nhanh gọn, kích thích tương tác và lưu lại",
+    narration_travel_label: "Du lịch & Danh lam",
+    narration_travel_desc: "Điểm đến tuyệt đẹp khiến người xem muốn xách ba lô lên và đi",
+    // Thời lượng
+    durationLabel: "Thời lượng mục tiêu",
+    // Nút tạo
+    generatingScript: "AI đang viết kịch bản…",
+    ctaGenerate: "Bắt đầu tạo kịch bản",
+    // Các bước
+    flowStep1: "1 Viết kịch bản",
+    flowStep2: "2 Tự ghép tư liệu",
+    flowStep3: "3 Xuất video hoàn chỉnh",
+    // Lỗi
+    errorNoLlm: "Chưa cấu hình LLM, vui lòng vào Cài đặt để thêm API Key",
+    errorGenerateCheckLlm: "Tạo kịch bản thất bại, vui lòng kiểm tra cấu hình LLM",
+    errorGenerate: "Tạo kịch bản thất bại",
+  },
 };

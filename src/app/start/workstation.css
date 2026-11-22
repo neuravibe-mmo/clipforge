@@ -32,13 +32,13 @@
 .cf-chip { display:inline-flex; align-items:center; gap:5px; border:1px solid var(--line); padding:2px 7px 2px 2px; border-radius:4px; color:var(--secondary-foreground); font-size:11.5px; text-align:left; }
 .cf-chip:hover,.cf-fchip:hover,.cf-trends-more:hover { border-color:var(--quiet); }
 .cf-chip img { width:25px; height:25px; object-fit:cover; border-radius:2px; background:#fff; }
-.cf-fields { display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.15fr); gap:12px; }
+.cf-fields { display:flex; flex-direction:column; gap:12px; }
 .cf-field { display:block; min-width:0; }
 .cf-field > span,.cf-fieldlabel,.cf-form-lbl { display:flex; align-items:baseline; gap:6px; margin-bottom:7px; color:var(--secondary-foreground); font-size:12px; font-weight:550; }
 .cf-fieldlabel { margin-top:19px; }
 .cf-root :is(.cf-input,.cf-area,.cf-keyinput,.cf-form-select,.cf-daily-input) { display:block; width:100%; border:1px solid var(--input); border-radius:4px; padding:8px 10px; color:var(--foreground); background:var(--background); font:inherit; font-size:13px; line-height:1.5; }
-.cf-field .cf-area { min-height:58px; resize:vertical; }
-.cf-fields .cf-area { height:38px; min-height:38px; }
+.cf-field .cf-area { min-height:38px; resize:none; overflow-y:hidden; field-sizing:content; }
+.cf-fields .cf-area { min-height:38px; height:auto; }
 .cf-root :is(input,textarea)::placeholder { color:var(--quiet); opacity:1; }
 .cf-genrow { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 .cf-gen { position:relative; display:flex; flex-direction:column; align-items:flex-start; gap:4px; border:1px solid var(--line); border-radius:5px; background:var(--background); padding:10px 11px 10px 30px; text-align:left; }
@@ -123,14 +123,13 @@
   .cf-workgrid,.cf-below { grid-template-columns:minmax(0,1.25fr) minmax(250px,.9fr); }
   .cf-wrap { padding-inline:22px; }
   .cf-examples { gap:5px; }
-  .cf-fields { grid-template-columns:1fr; gap:10px; }
+  .cf-fields { gap:10px; }
 }
 @media(max-width:930px) {
   .cf-workgrid,.cf-below { grid-template-columns:1fr; }
   .cf-below > * { grid-column:auto; grid-row:auto; }
   .cf-side { grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; }
   .cf-recent { padding-top:0; border:0; }
-  .cf-fields { grid-template-columns:1fr 1fr; }
 }
 @media(max-width:640px) {
   .cf-wrap { padding:0 16px 40px; }
@@ -147,7 +146,7 @@
   .cf-examples { margin:8px 0 13px; }
   .cf-examples > span { flex-basis:100%; }
   .cf-chip img { width:20px; height:20px; }
-  .cf-fields { grid-template-columns:1fr; gap:8px; }
+  .cf-fields { gap:8px; }
   .cf-gen { padding:9px 7px 9px 25px; }
   .cf-gen::before { left:8px; top:13px; }
   .cf-gen b { font-size:12px; }
