@@ -373,7 +373,23 @@ export default function StartPage() {
   const startTopic = async () => {
     setStageIdx(0);
     setStage(t("stageScript"));
-    if (!llmReady) throw new Error(t("errTopicScript"));
+    if (!llmReady) {
+      const projectRes = await fetch("/api/project", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: topic.trim().slice(0, 30),
+          contentType: "topic",
+          topic: topic.trim(),
+        }),
+      });
+      if (projectRes.ok) {
+        const p = await projectRes.json();
+        router.push(`/project/${p.id}/script${genQuery()}`);
+        return;
+      }
+      throw new Error(t("errTopicScript"));
+    }
     const res = await fetch("/api/topic/script", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -414,7 +430,10 @@ export default function StartPage() {
 
     setStageIdx(2);
     setStage(t("stageScript"));
-    if (!llmReady) throw new Error(t("errScript"));
+    if (!llmReady) {
+      router.push(`/project/${project.id}/script${genQuery()}`);
+      return;
+    }
     const scriptRes = await fetch("/api/llm/script", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -432,8 +451,8 @@ export default function StartPage() {
       }),
     });
     if (!scriptRes.ok) {
-      const errData = await scriptRes.json().catch(() => ({}));
-      throw new Error(errData.error ? `${t("errScript")}: ${errData.error}` : t("errScript"));
+      router.push(`/project/${project.id}/script${genQuery()}`);
+      return;
     }
     router.push(`/project/${project.id}/script?auto=1${genQuery()}`);
   };
@@ -452,9 +471,12 @@ export default function StartPage() {
     const p = data.product || {};
     setStageIdx(1);
     setStage(t("stageScript"));
-    if (!llmReady) throw new Error(t("errScript"));
+    if (!llmReady) {
+      router.push(`/project/${data.projectId}/script${genQuery()}`);
+      return;
+    }
     // even if script gen fails, the project exists with product data — the script page offers retry
-    await fetch("/api/llm/script", {
+    const scriptRes = await fetch("/api/llm/script", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -470,6 +492,10 @@ export default function StartPage() {
         ...(creationCharacter() && { character: creationCharacter() }),
       }),
     });
+    if (!scriptRes.ok) {
+      router.push(`/project/${data.projectId}/script${genQuery()}`);
+      return;
+    }
     router.push(`/project/${data.projectId}/script?auto=1${genQuery()}`);
   };
 

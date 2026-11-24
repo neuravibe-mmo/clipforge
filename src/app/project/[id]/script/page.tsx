@@ -820,12 +820,14 @@ export default function ScriptPage() {
           <p className="text-sm text-muted-foreground mb-6">
             {t("emptyDesc", { name: projectName || t("emptyDescThisProject") })}
           </p>
-          {genError && (
-            <div className="mb-4 flex flex-col items-center gap-2">
-              <p className="text-sm text-destructive">{genError}</p>
+          {(!llm.apiKey || genError) && (
+            <div className="mb-4 flex flex-col items-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-center max-w-sm">
+              <p className="text-xs text-amber-500 font-medium">
+                {genError || t("errorNoLlm")}
+              </p>
               {/* most generation errors are LLM-config related — offer a direct jump to Settings */}
-              <Link href="/settings?tab=llm" className="text-xs text-primary underline underline-offset-2 hover:text-primary/80">
-                {t("goToSettings")}
+              <Link href="/settings?tab=llm" className="text-xs text-primary underline underline-offset-2 hover:text-primary/80 font-medium">
+                {t("goToSettings")} →
               </Link>
             </div>
           )}
