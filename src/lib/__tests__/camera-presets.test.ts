@@ -9,6 +9,7 @@ import {
   findPresetByPrompt,
   mixCameraPrompt,
   mixablePresets,
+  formatCamera,
 } from "@/lib/camera-presets";
 import { hasCameraConflict, buildMotionPrompt } from "@/lib/motion-prompt";
 
@@ -120,5 +121,23 @@ describe("cameraPresetGuide 脚本 LLM 词表", () => {
     expect(guide).toContain("镜头围绕主体缓慢环绕半圈");
     // The guide must carry the conflict rule so the LLM doesn't mix hold + move in one line
     expect(guide).toContain("固定镜头");
+  });
+});
+
+describe("formatCamera 本地化格式化", () => {
+  it("zh 返回原文", () => {
+    expect(formatCamera("镜头急速推近商品主体", "zh")).toBe("镜头急速推近商品主体");
+  });
+
+  it("vi 预设或中文运镜关键词转为越南语", () => {
+    const text1 = "镜头急速推近主体，冲击力强，开场抓眼";
+    expect(formatCamera(text1, "vi")).toContain("Góc máy lao nhanh");
+    const text2 = "镜头急速推近商品主体，突出便携机身与旁边的冰块。";
+    expect(formatCamera(text2, "vi")).toContain("Đẩy nhanh");
+  });
+
+  it("en 预设转为英文", () => {
+    const text = "镜头急速推近主体，冲击力强，开场抓眼";
+    expect(formatCamera(text, "en")).toContain("camera crashes in fast");
   });
 });

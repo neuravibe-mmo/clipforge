@@ -29,6 +29,7 @@ import {
   findPresetByPrompt,
   mixablePresets,
   mixCameraPrompt,
+  formatCamera,
   type CameraPresetCategory,
 } from "@/lib/camera-presets";
 import { LOOK_PRESETS, getLookPreset, lookImageSuffix } from "@/lib/look-presets";
@@ -500,7 +501,7 @@ export default function AssetsPage() {
   const resumeTask = useCallback(
     async (task: PendingAiTask) => {
       if (!task.scriptId && task.shotId != null) {
-        if (!scriptId || !window.confirm(locale === "zh" ? "将此历史任务绑定到当前脚本的同号分镜，再恢复结果？" : "Assign this legacy task to the matching shot in the current script before recovering?")) return;
+        if (!scriptId || !window.confirm(locale === "zh" ? "将此历史任务绑定到当前脚本的同号分镜，再恢复结果？" : locale === "vi" ? "Gán tác vụ lịch sử này vào phân cảnh tương ứng trong kịch bản hiện tại trước khi khôi phục?" : "Assign this legacy task to the matching shot in the current script before recovering?")) return;
         const response = await fetch("/api/ai/tasks", { method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ rowId: task.id, projectId: id, scriptId }) });
         if (!response.ok) { setTaskMsg((await response.json()).error); return; }
@@ -508,7 +509,7 @@ export default function AssetsPage() {
       }
       const attachReplica = task.purpose === "replicate" && !task.taskId;
       const taskId = attachReplica
-        ? window.prompt(locale === "zh" ? "填写在原模型平台核对过的复刻任务 ID，以恢复已有任务。" : "Enter the existing task ID verified in your provider history.")?.trim()
+        ? window.prompt(locale === "zh" ? "填写在原模型平台核对过的复刻任务 ID，以恢复已有任务。" : locale === "vi" ? "Nhập ID tác vụ sao chép đã xác minh trên nền tảng model gốc để khôi phục." : "Enter the existing task ID verified in your provider history.")?.trim()
         : task.taskId;
       if (!taskId) return;
       const prov = providers[task.provider];
@@ -640,7 +641,7 @@ export default function AssetsPage() {
       if (retake) {
         const patched = applyRetakePatch(finalPrompt, retake);
         finalPrompt = patched.prompt;
-        setTaskMsg(t("retakeApplied", { change: locale === "zh" ? patched.change.zh : patched.change.en }));
+        setTaskMsg(t("retakeApplied", { change: locale === "zh" ? patched.change.zh : locale === "vi" ? patched.change.vi ?? patched.change.en : patched.change.en }));
       }
       const assetIndex = assets.findIndex((item) => item.shotId === shotId);
       const previousAsset = assetIndex > 0 ? assets[assetIndex - 1] : undefined;
@@ -800,7 +801,7 @@ export default function AssetsPage() {
       if (opts?.referenceFrame && !(modelTarget.provider === "atlas-cloud" || modelTarget.provider === "volcengine" ||
           (modelTarget.provider === "openai" && genModel.startsWith("gpt-image")) ||
           (modelTarget.provider === "fal-ai" && (genModel.includes("/edit") || genModel.includes("/image-to-image") || genModel.includes("/flare/"))))) {
-        setAssets((prev) => prev.map((a) => a.shotId === shotId ? { ...a, error: locale === "en" ? "Choose an image model with multi-reference editing." : "请先选择支持多图编辑的图像模型。" } : a));
+        setAssets((prev) => prev.map((a) => a.shotId === shotId ? { ...a, error: locale === "en" ? "Choose an image model with multi-reference editing." : locale === "vi" ? "Vui lòng chọn model tạo ảnh hỗ trợ chỉnh sửa nhiều ảnh tham chiếu." : "请先选择支持多图编辑的图像模型。" } : a));
         return undefined;
       }
       const basePrompt = opts?.referenceFrame
@@ -1047,7 +1048,7 @@ export default function AssetsPage() {
             )}
 
         <Tools className={isReference ? "mt-5 border-y border-border py-3" : undefined}>
-          {isReference && <summary className="cursor-pointer text-sm font-medium">{locale === "en" ? "Media library and batch tools" : "素材库与批量工具"}</summary>}
+          {isReference && <summary className="cursor-pointer text-sm font-medium">{locale === "en" ? "Media library and batch tools" : locale === "vi" ? "Kho tư liệu & công cụ hàng loạt" : "素材库与批量工具"}</summary>}
         <ModelCatalogStatus statuses={catalog.statuses} pending={catalog.pending} onRetry={catalog.retry} />
         {/* Action bar: title + generation ACTIONS only. Creative settings live in the
             director panel below so this row stays a stable, scannable set of verbs. */}
@@ -1055,7 +1056,7 @@ export default function AssetsPage() {
           <div>
             <h2 className="text-lg font-semibold">{t("title")}</h2>
             <p className="text-sm text-muted-foreground mt-0.5">
-              {loading ? tc("loading") : isReference ? (locale === "en" ? `${assets.filter(a => a.thumbnailUrl || a.referenceCut?.productImage).length} of ${assets.length} shots have media` : `${assets.filter(a => a.thumbnailUrl || a.referenceCut?.productImage).length}/${assets.length} 镜已有可合成画面`) : t("assetsReady", { done: doneCount, total: assets.length })}
+              {loading ? tc("loading") : isReference ? (locale === "en" ? `${assets.filter(a => a.thumbnailUrl || a.referenceCut?.productImage).length} of ${assets.length} shots have media` : locale === "vi" ? `${assets.filter(a => a.thumbnailUrl || a.referenceCut?.productImage).length}/${assets.length} phân cảnh đã có tư liệu ghép` : `${assets.filter(a => a.thumbnailUrl || a.referenceCut?.productImage).length}/${assets.length} 镜已有可合成画面`) : t("assetsReady", { done: doneCount, total: assets.length })}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -1201,17 +1202,17 @@ export default function AssetsPage() {
             >
               <option value="none">{t("lookNone")}</option>
               {/* "real" family = raw phone-shot looks (UGC anti-AI-slop path); styled = art-directed */}
-              <optgroup label={locale === "zh" ? "实拍感" : "Real-shot"}>
+              <optgroup label={locale === "zh" ? "实拍感" : locale === "vi" ? "Quay thực tế" : "Real-shot"}>
                 {LOOK_PRESETS.filter((p) => p.group === "real").map((p) => (
                   <option key={p.id} value={p.id}>
-                    {locale === "zh" ? p.name.zh : p.name.en}
+                    {locale === "zh" ? p.name.zh : locale === "vi" ? p.name.vi ?? p.name.en : p.name.en}
                   </option>
                 ))}
               </optgroup>
-              <optgroup label={locale === "zh" ? "风格化" : "Styled"}>
+              <optgroup label={locale === "zh" ? "风格化" : locale === "vi" ? "Cách điệu" : "Styled"}>
                 {LOOK_PRESETS.filter((p) => p.group !== "real").map((p) => (
                   <option key={p.id} value={p.id}>
-                    {locale === "zh" ? p.name.zh : p.name.en}
+                    {locale === "zh" ? p.name.zh : locale === "vi" ? p.name.vi ?? p.name.en : p.name.en}
                   </option>
                 ))}
               </optgroup>
@@ -1397,13 +1398,13 @@ export default function AssetsPage() {
         {/* cloud paid-task recovery (issue #16): submitted tasks whose results were never
             retrieved — offer resume instead of a duplicate (billed) resubmit */}
         {reuseRows.length > 0 && scriptId && assets.length > 0 && <details className="my-4">
-          <summary>{locale === "zh" ? "复用其他脚本或旧项目素材" : "Reuse a take from another script or a legacy project"}</summary>
-          <select aria-label={locale === "zh" ? "来源素材" : "Source take"} value={reuseId} onChange={e => setReuseId(e.target.value)}>
-            <option value="">{locale === "zh" ? "选择来源素材" : "Select source"}</option>
-            {reuseRows.map(row => <option key={row.id} value={row.id}>{row.scriptTitle || row.scriptId?.slice(0,8) || (locale === "zh" ? "历史素材" : "Legacy")} · #{row.shotId} · {row.filePath.split("/").pop()}</option>)}
+          <summary>{locale === "zh" ? "复用其他脚本或旧项目素材" : locale === "vi" ? "Tái sử dụng tư liệu từ kịch bản khác hoặc dự án cũ" : "Reuse a take from another script or a legacy project"}</summary>
+          <select aria-label={locale === "zh" ? "来源素材" : locale === "vi" ? "Tư liệu nguồn" : "Source take"} value={reuseId} onChange={e => setReuseId(e.target.value)}>
+            <option value="">{locale === "zh" ? "选择来源素材" : locale === "vi" ? "Chọn tư liệu nguồn" : "Select source"}</option>
+            {reuseRows.map(row => <option key={row.id} value={row.id}>{row.scriptTitle || row.scriptId?.slice(0,8) || (locale === "zh" ? "历史素材" : locale === "vi" ? "Tư liệu cũ" : "Legacy")} · #{row.shotId} · {row.filePath.split("/").pop()}</option>)}
           </select>
-          <select aria-label={locale === "zh" ? "目标分镜" : "Destination shot"} value={reuseShot} onChange={e => setReuseShot(e.target.value)}>
-            <option value="">{locale === "zh" ? "选择目标分镜" : "Select destination"}</option>
+          <select aria-label={locale === "zh" ? "目标分镜" : locale === "vi" ? "Phân cảnh đích" : "Destination shot"} value={reuseShot} onChange={e => setReuseShot(e.target.value)}>
+            <option value="">{locale === "zh" ? "选择目标分镜" : locale === "vi" ? "Chọn phân cảnh đích" : "Select destination"}</option>
             {assets.map(row => <option key={row.shotId} value={row.shotId}>#{row.shotId} {row.description}</option>)}
           </select>
           <button disabled={!reuseId || !reuseShot} onClick={async () => {
@@ -1413,7 +1414,7 @@ export default function AssetsPage() {
               if (!response.ok) throw new Error((await response.json()).error);
               await reloadAssets(); setReuseId(""); setReuseShot(""); setReuseError("");
             } catch (error) { setReuseError(error instanceof Error ? error.message : t("taskResumeFailed")); }
-          }}>{locale === "zh" ? "将素材用于选中分镜" : "Use take for this shot"}</button>
+          }}>{locale === "zh" ? "将素材用于选中分镜" : locale === "vi" ? "Áp dụng tư liệu cho phân cảnh đã chọn" : "Use take for this shot"}</button>
           {reuseError && <p role="alert">{reuseError}</p>}
         </details>}
         {pendingTasks.length > 0 && (
@@ -1578,7 +1579,7 @@ export default function AssetsPage() {
                                 title={t("cameraEditTip")}
                                 className="min-w-0 truncate text-left text-muted-foreground hover:text-foreground underline decoration-dotted underline-offset-2"
                               >
-                                {asset.camera || t("cameraUnset")}
+                                {formatCamera(asset.camera, locale) || t("cameraUnset")}
                               </button>
                             )}
                             {savingCameraShot === asset.shotId ? (
@@ -1594,15 +1595,15 @@ export default function AssetsPage() {
                                 <optgroup label={t("cameraRecommendGroup")}>
                                   {recommendedPresets(asset.type).map((p) => (
                                     <option key={`rec-${p.id}`} value={p.id}>
-                                      {locale === "zh" ? p.name.zh : p.name.en}
+                                      {locale === "zh" ? p.name.zh : locale === "vi" ? p.name.vi : p.name.en}
                                     </option>
                                   ))}
                                 </optgroup>
                                 {(Object.keys(CAMERA_PRESET_CATEGORIES) as CameraPresetCategory[]).map((cat) => (
-                                  <optgroup key={cat} label={locale === "zh" ? CAMERA_PRESET_CATEGORIES[cat].zh : CAMERA_PRESET_CATEGORIES[cat].en}>
+                                  <optgroup key={cat} label={locale === "zh" ? CAMERA_PRESET_CATEGORIES[cat].zh : locale === "vi" ? CAMERA_PRESET_CATEGORIES[cat].vi : CAMERA_PRESET_CATEGORIES[cat].en}>
                                     {CAMERA_PRESETS.filter((p) => p.category === cat).map((p) => (
                                       <option key={p.id} value={p.id}>
-                                        {locale === "zh" ? p.name.zh : p.name.en}
+                                        {locale === "zh" ? p.name.zh : locale === "vi" ? p.name.vi : p.name.en}
                                       </option>
                                     ))}
                                   </optgroup>
@@ -1626,7 +1627,7 @@ export default function AssetsPage() {
                                   <option value="">{t("cameraMixPick")}</option>
                                   {candidates.map((p) => (
                                     <option key={p.id} value={p.id}>
-                                      {locale === "zh" ? p.name.zh : p.name.en}
+                                      {locale === "zh" ? p.name.zh : locale === "vi" ? p.name.vi : p.name.en}
                                     </option>
                                   ))}
                                 </select>
@@ -1778,7 +1779,7 @@ export default function AssetsPage() {
                               <option value="">{t("retakeDiag")}</option>
                               {RETAKE_SYMPTOMS.map((sym) => (
                                 <option key={sym.id} value={sym.id}>
-                                  {locale === "zh" ? sym.label.zh : sym.label.en}
+                                  {locale === "zh" ? sym.label.zh : locale === "vi" ? sym.label.vi : sym.label.en}
                                 </option>
                               ))}
                             </select>

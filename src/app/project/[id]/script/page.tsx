@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import type { Shot } from "@/lib/db/schema";
+import { formatCamera } from "@/lib/camera-presets";
 import { JUDGE_META, type JudgeReport, autoApplicableRewrites, autoApplicableDescriptionRewrites } from "@/lib/script-judge";
 import { useTemplateStore } from "@/lib/stores/template-store";
 import { useSettingsStore } from "@/lib/stores/settings-store";
@@ -1208,7 +1209,7 @@ export default function ScriptPage() {
                       {judgeReport.verdicts.map((v) => (
                         <div key={v.judge} className="rounded-lg border border-border/60 p-2.5">
                           <div className="text-xs font-medium mb-1">
-                            {locale === "zh" ? JUDGE_META[v.judge].zh : JUDGE_META[v.judge].en}
+                            {locale === "zh" ? JUDGE_META[v.judge].zh : locale === "vi" ? JUDGE_META[v.judge].vi : JUDGE_META[v.judge].en}
                             {v.issues.length === 0 && <span className="ml-2 text-green-400">✓</span>}
                           </div>
                           {v.issues.length > 0 && (
@@ -1378,7 +1379,7 @@ export default function ScriptPage() {
                                   <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
                                     <span className="flex items-center gap-1">
                                       <LuClock className="w-3 h-3" />
-                                      {shot.camera}
+                                      {formatCamera(shot.camera, locale)}
                                     </span>
                                     <span className="flex items-center gap-1">
                                       {shot.visualSource === "product_image" ? t("visualProductImage") : shot.visualSource === "ai_generate" ? t("visualAiGenerate") : t("visualUserUpload")}

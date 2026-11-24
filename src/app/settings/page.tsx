@@ -676,7 +676,7 @@ export default function SettingsPage() {
                     </div>
 
                     {/neuravibemmo\.dpdns\.org/i.test(llm.baseUrl) ? (
-                      <div className="p-3.5 rounded-lg bg-primary/10 border border-primary/20 text-xs text-foreground space-y-1">
+                      <div className="p-3.5 rounded-lg bg-primary/10 border border-primary/20 text-xs text-foreground space-y-2.5">
                         <div className="font-medium text-primary flex items-center gap-1.5">
                           <LuCheck className="w-4 h-4 text-primary" />
                           <span>{t("neuravibeConfiguredTitle")}</span>
@@ -684,6 +684,35 @@ export default function SettingsPage() {
                         <p className="text-muted-foreground text-xs leading-relaxed">
                           {t("neuravibeConfiguredDesc")}
                         </p>
+                        <div className="pt-2 border-t border-border/40 flex flex-wrap items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={testLLMConnection}
+                            disabled={llmTestStatus === "testing"}
+                            className={`text-xs ${
+                              llmTestStatus === "success"
+                                ? "text-emerald-600"
+                                : llmTestStatus === "error"
+                                ? "text-destructive"
+                                : ""
+                            }`}
+                          >
+                            {llmTestStatus === "testing"
+                              ? t("llmTestTesting")
+                              : llmTestStatus === "success"
+                              ? t("llmTestSuccess")
+                              : llmTestStatus === "error"
+                              ? t("llmTestError")
+                              : t("llmTestButton")}
+                          </Button>
+                          {llmTestStatus === "error" && llmTestError && (
+                            <p className="text-xs text-destructive break-all">{llmTestError}</p>
+                          )}
+                          {llmTestWarning && (
+                            <p className="text-xs text-amber-600 break-all">{llmTestWarning}</p>
+                          )}
+                        </div>
                       </div>
                     ) : (
                       <>

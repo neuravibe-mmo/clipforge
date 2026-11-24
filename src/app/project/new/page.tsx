@@ -1420,7 +1420,7 @@ export default function NewProjectPage() {
                         className={EDITOR_INPUT_CLS}
                       >
                         {LOOK_PRESETS.map((p) => (
-                          <option key={p.id} value={p.id}>{locale === "zh" ? p.name.zh : p.name.en}</option>
+                          <option key={p.id} value={p.id}>{locale === "zh" ? p.name.zh : locale === "vi" ? p.name.vi ?? p.name.en : p.name.en}</option>
                         ))}
                       </select>
                     </label>
@@ -1460,7 +1460,7 @@ export default function NewProjectPage() {
                           >
                             <option value="">{t("adTplCameraAuto")}</option>
                             {CAMERA_PRESETS.map((p) => (
-                              <option key={p.id} value={p.id}>{locale === "zh" ? p.name.zh : p.name.en}</option>
+                              <option key={p.id} value={p.id}>{locale === "zh" ? p.name.zh : locale === "vi" ? p.name.vi : p.name.en}</option>
                             ))}
                           </select>
                         </label>

@@ -19,6 +19,7 @@
 
 import OpenAI, { APIConnectionError, APIConnectionTimeoutError } from "openai";
 import { listModels, modelListHint, normalizeChatBase } from "@/lib/llm-models";
+import { neuravibeAdapterFetch } from "@/lib/neuravibe-adapter";
 
 /** Endpoint + model a call was aimed at (used to tailor the hint). */
 export interface LLMTarget {
@@ -217,7 +218,7 @@ export function createLLMClient(config: LLMClientConfig): OpenAI {
     maxRetries: 3,
     // Cap recovery and optional-param recovery apply everywhere (our params, our problem); the
     // 402 hook only where 402 is genuinely transient. Composed so one wrapper feeds the other.
-    fetch: optionalParamRetryFetch(tokenCapRetryFetch(retryFreePool402 ? freePoolRetryFetch() : fetch)),
+    fetch: neuravibeAdapterFetch(optionalParamRetryFetch(tokenCapRetryFetch(retryFreePool402 ? freePoolRetryFetch() : fetch))),
   });
 }
 

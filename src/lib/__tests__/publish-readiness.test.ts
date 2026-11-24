@@ -87,6 +87,14 @@ describe("checkPublishReadiness", () => {
     expect(item(r, "compliance")?.message).toMatch(/ad-law/);
   });
 
+  it("locale=vi → 越南语文案", () => {
+    const r = checkPublishReadiness([mk({ type: "hook", voiceover: "最好" })], 30, { locale: "vi" });
+    expect(item(r, "compliance")?.message).toMatch(/vi phạm quảng cáo/);
+    const healthy = checkPublishReadiness(good, 30, { locale: "vi" });
+    expect(item(healthy, "compliance")?.message).toBe("Không có từ ngữ vi phạm chính sách quảng cáo");
+    expect(item(healthy, "hook")?.message).toBe("Phần mở đầu ngắn gọn, ấn tượng");
+  });
+
   it("overall 优先级：有 fail 即 needsWork（即便也有 pass）", () => {
     const r = checkPublishReadiness([mk({ type: "hook", duration: 3, voiceover: "最好的产品还在等什么" }), ...good.slice(1)], 30, { aigcLabel: true });
     expect(r.fail).toBeGreaterThan(0);
