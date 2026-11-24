@@ -8,7 +8,7 @@
  */
 
 import "./workstation.css";
-import { ArrowRight, Clapperboard, FileVideo, FolderOpen, Play, BookOpen } from "lucide-react";
+import { ArrowRight, Clapperboard, FileVideo, FolderOpen, Play, BookOpen, ArrowLeft, RotateCw, AlertCircle } from "lucide-react";
 import { randomUUID } from "@/lib/uuid";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -373,23 +373,7 @@ export default function StartPage() {
   const startTopic = async () => {
     setStageIdx(0);
     setStage(t("stageScript"));
-    if (!llmReady) {
-      const projectRes = await fetch("/api/project", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: topic.trim().slice(0, 30),
-          contentType: "topic",
-          topic: topic.trim(),
-        }),
-      });
-      if (projectRes.ok) {
-        const p = await projectRes.json();
-        router.push(`/project/${p.id}/script${genQuery()}`);
-        return;
-      }
-      throw new Error(t("errTopicScript"));
-    }
+    if (!llmReady) throw new Error(t("errTopicScript"));
     const res = await fetch("/api/topic/script", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -413,6 +397,7 @@ export default function StartPage() {
       throw new Error(errData.error ? `${t("errProjectCreate")}: ${errData.error}` : t("errProjectCreate"));
     }
     const project = await projectRes.json();
+    await new Promise((r) => setTimeout(r, 250));
 
     setStageIdx(1);
     setStage(t("stageUpload"));
@@ -427,13 +412,11 @@ export default function StartPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ productImages: paths }),
     });
+    await new Promise((r) => setTimeout(r, 250));
 
     setStageIdx(2);
     setStage(t("stageScript"));
-    if (!llmReady) {
-      router.push(`/project/${project.id}/script${genQuery()}`);
-      return;
-    }
+    if (!llmReady) throw new Error(t("errScript"));
     const scriptRes = await fetch("/api/llm/script", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -451,8 +434,8 @@ export default function StartPage() {
       }),
     });
     if (!scriptRes.ok) {
-      router.push(`/project/${project.id}/script${genQuery()}`);
-      return;
+      const errData = await scriptRes.json().catch(() => ({}));
+      throw new Error(errData.error ? `${t("errScript")}: ${errData.error}` : t("errScript"));
     }
     router.push(`/project/${project.id}/script?auto=1${genQuery()}`);
   };
@@ -469,14 +452,12 @@ export default function StartPage() {
     const data = await ingestRes.json().catch(() => ({}));
     if (!ingestRes.ok || !data.projectId) throw new Error(data.error || t("errIngest"));
     const p = data.product || {};
+    await new Promise((r) => setTimeout(r, 250));
     setStageIdx(1);
     setStage(t("stageScript"));
-    if (!llmReady) {
-      router.push(`/project/${data.projectId}/script${genQuery()}`);
-      return;
-    }
+    if (!llmReady) throw new Error(t("errScript"));
     // even if script gen fails, the project exists with product data — the script page offers retry
-    const scriptRes = await fetch("/api/llm/script", {
+    await fetch("/api/llm/script", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -492,14 +473,10 @@ export default function StartPage() {
         ...(creationCharacter() && { character: creationCharacter() }),
       }),
     });
-    if (!scriptRes.ok) {
-      router.push(`/project/${data.projectId}/script${genQuery()}`);
-      return;
-    }
     router.push(`/project/${data.projectId}/script?auto=1${genQuery()}`);
   };
 
-  // actually run generation (shared by all modes); restore busy/stage on failure
+  // actually run generation (shared by all modes); keep progress view visible on error
   const runGeneration = async () => {
     setBusy(true);
     setError(null);
@@ -509,9 +486,7 @@ export default function StartPage() {
       else await startUpload();
     } catch (e) {
       setError(e instanceof Error ? e.message : t("errGeneric"));
-      setBusy(false);
-      setStage("");
-      setStageIdx(0);
+      // Retain busy = true and current stageIdx so the user sees the progress screen with the failing step
     }
   };
 
@@ -540,27 +515,75 @@ export default function StartPage() {
               /* busy takeover: the whole card becomes a live checklist so the 20–60s
                  creation wait reads as progress, not a frozen button */
               <div className="cf-prog">
-                <div className="cf-prog-title">
-                  <span className="cf-spin" />
-                  {t("progTitle")}
+                <div className={`cf-prog-title${error ? " error" : ""}`}>
+                  {error ? (
+                    <AlertCircle size={18} />
+                  ) : (
+                    <span className="cf-spin" />
+                  )}
+                  {error ? t("progFailedTitle") : t("progTitle")}
                 </div>
                 <div className="cf-prog-steps">
-                  {busySteps.map((label, i) => (
-                    <div key={label} className={`cf-prog-step${i < stageIdx ? " done" : i === stageIdx ? " on" : ""}`}>
-                      <span className="ic">
-                        {i < stageIdx ? (
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l5 5L20 6" /></svg>
-                        ) : i === stageIdx ? (
-                          <span className="cf-spin sm" />
-                        ) : (
-                          i + 1
-                        )}
-                      </span>
-                      {label}
-                    </div>
-                  ))}
+                  {busySteps.map((label, i) => {
+                    const isError = Boolean(error && i === stageIdx);
+                    const isDone = i < stageIdx;
+                    const isCurrent = i === stageIdx;
+                    return (
+                      <div
+                        key={label}
+                        className={`cf-prog-step${isDone ? " done" : ""}${isCurrent && !error ? " on" : ""}${isError ? " error" : ""}`}
+                      >
+                        <span className="ic">
+                          {isDone ? (
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 13l5 5L20 6" /></svg>
+                          ) : isError ? (
+                            <span className="cf-prog-err-ic">✕</span>
+                          ) : isCurrent ? (
+                            <span className="cf-spin sm" />
+                          ) : (
+                            i + 1
+                          )}
+                        </span>
+                        {label}
+                      </div>
+                    );
+                  })}
                 </div>
-                <div className="cf-prog-hint">{t("progHint")}</div>
+                {error ? (
+                  <>
+                    <div className="cf-prog-errbox">
+                      <div className="cf-prog-errmsg">{error}</div>
+                      {(!llmReady || error.includes("LLM") || error.includes("API Key") || error.includes("kịch bản") || error.includes("model")) && (
+                        <Link href="/settings?tab=llm" className="cf-prog-errlink">
+                          {t("atlasUseOther")} →
+                        </Link>
+                      )}
+                    </div>
+                    <div className="cf-prog-actions">
+                      <button
+                        type="button"
+                        className="cf-prog-btn cf-prog-btn-back"
+                        onClick={() => {
+                          setBusy(false);
+                          setError(null);
+                        }}
+                      >
+                        <ArrowLeft size={15} />
+                        {t("progBack")}
+                      </button>
+                      <button
+                        type="button"
+                        className="cf-prog-btn cf-prog-btn-retry"
+                        onClick={() => runGeneration()}
+                      >
+                        <RotateCw size={14} />
+                        {t("progRetry")}
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="cf-prog-hint">{t("progHint")}</div>
+                )}
               </div>
             ) : (
               <>

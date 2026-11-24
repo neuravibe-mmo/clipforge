@@ -3,6 +3,7 @@ import {
   MATERIAL_MAX_BYTES,
   type PublicLocalMaterial,
 } from "@/lib/material-library";
+import type { Locale } from "@/lib/i18n/config";
 export interface MaterialUploadProgress {
   percent: number;
   verifying: boolean;
@@ -13,7 +14,7 @@ export function uploadLocalMaterial(
   projectId: string,
   file: File,
   options: {
-    locale: "zh" | "en";
+    locale: Locale;
     signal?: AbortSignal;
     onProgress?: (progress: MaterialUploadProgress) => void;
   },

@@ -1,4 +1,5 @@
 import { getVideoModelCapabilities } from "@/lib/model-capabilities";
+import type { Locale } from "@/lib/i18n/config";
 
 export const VIDEO_REFERENCE_ROLES = [
   "keyframe",
@@ -46,7 +47,7 @@ export interface VideoControlPlan extends VideoControlSummary {
 const isNonEmpty = (value: unknown): value is string => typeof value === "string" && value.trim().length > 0;
 const unique = <T,>(values: T[]): T[] => [...new Set(values)];
 
-function referenceInstruction(items: VideoReferenceInput[], locale: "zh" | "en", imageOffset = 0): string {
+function referenceInstruction(items: VideoReferenceInput[], locale: Locale, imageOffset = 0): string {
   if (!items.length) return "";
   let image = imageOffset;
   let video = 0;
@@ -64,7 +65,7 @@ function referenceInstruction(items: VideoReferenceInput[], locale: "zh" | "en",
     : `Reference map: ${labels.join("; ")}. Use each reference only for its declared role; do not copy a character-sheet background or reference-video framing into the result. Keep character, product, and spatial state stable throughout.`;
 }
 
-function nativeAudioInstruction(input: { voiceover?: string; description?: string; speakerVisible?: boolean; locale: "zh" | "en" }): string {
+function nativeAudioInstruction(input: { voiceover?: string; description?: string; speakerVisible?: boolean; locale: Locale }): string {
   const voiceover = input.voiceover?.trim();
   if (voiceover) {
     if (!input.speakerVisible) {
@@ -101,7 +102,7 @@ export function buildVideoControlPlan(input: {
   voiceover?: string;
   speakerVisible?: boolean;
   description?: string;
-  locale: "zh" | "en";
+  locale: Locale;
 }): VideoControlPlan {
   const capabilities = getVideoModelCapabilities(input.modelId, input.supportsAudio, input.provider);
   const optional: VideoReferenceInput[] = [

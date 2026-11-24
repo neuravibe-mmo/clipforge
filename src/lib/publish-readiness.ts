@@ -9,6 +9,7 @@
  */
 import { checkScriptCompliance } from "./ad-compliance";
 import type { Shot } from "./db/schema";
+import type { Locale } from "./i18n/config";
 
 export type CheckStatus = "pass" | "warn" | "fail";
 export type CheckKey = "compliance" | "hook" | "duration" | "caption" | "cta" | "structure" | "aigc" | "productEarly";
@@ -33,7 +34,7 @@ export interface ReadinessOptions {
   aigcLabel?: boolean;
   /** Product name (commerce videos only) — enables the "product visible in the first 3s" hard rule; omit for topic videos */
   productName?: string;
-  locale?: "zh" | "en";
+  locale?: Locale;
 }
 
 // E-commerce duration sweet spot (seconds): too short = insufficient info to drive purchase; too long = completion rate drops

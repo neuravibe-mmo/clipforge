@@ -103,7 +103,10 @@ export const start: NamespaceMessages = {
     stageIngest: "抓取商品信息…",
     // 忙碌接管卡（点「开始生成」后整卡变进度清单）
     progTitle: "正在为你生成",
+    progFailedTitle: "生成遇到问题",
     progHint: "通常 20~60 秒 · 写完脚本会自动进入下一步，请别关页面",
+    progBack: "返回修改",
+    progRetry: "重试",
     // 错误提示
     errTopicScript: "生成失败，请检查 LLM 配置",
     errProjectCreate: "项目创建失败，请重试",
@@ -285,7 +288,10 @@ export const start: NamespaceMessages = {
     stageIngest: "Fetching product info…",
     // 忙碌接管卡（点「开始生成」后整卡变进度清单）
     progTitle: "Generating for you",
+    progFailedTitle: "Generation failed",
     progHint: "Usually 20–60s · you'll move to the next step automatically — keep this page open",
+    progBack: "Back to edit",
+    progRetry: "Retry",
     // 错误提示
     errTopicScript: "Generation failed. Check your LLM settings",
     errProjectCreate: "Failed to create project. Please try again",
@@ -453,7 +459,10 @@ export const start: NamespaceMessages = {
     stageScript: "AI đang viết kịch bản…",
     stageIngest: "Đang lấy thông tin sản phẩm…",
     progTitle: "Đang xử lý cho bạn",
+    progFailedTitle: "Có lỗi xảy ra khi tạo",
     progHint: "Thường mất từ 20–60s · hệ thống sẽ tự chuyển bước tiếp theo, vui lòng giữ trang này mở",
+    progBack: "Quay lại chỉnh sửa",
+    progRetry: "Thử lại",
     errTopicScript: "Tạo thất bại. Vui lòng kiểm tra cài đặt LLM",
     errProjectCreate: "Tạo dự án thất bại. Vui lòng thử lại",
     errUpload: "Tải ảnh thất bại. Kiểm tra kết nối mạng của bạn",

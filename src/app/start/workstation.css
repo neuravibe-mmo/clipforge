@@ -111,11 +111,68 @@
 .cf-daily .cf-daily-input { width:auto; min-width:100px; flex:1; }
 .cf-daily-msg { margin-top:8px; font-size:12px; }
 .cf-prog { padding:20px 0; }
-.cf-prog-title { font-size:17px; font-weight:600; }
+.cf-prog-title { font-size:17px; font-weight:600; display:flex; align-items:center; gap:8px; }
+.cf-prog-title.error { color:#ef4444; }
 .cf-prog-steps { margin:17px 0; display:grid; gap:12px; }
-.cf-prog-step { color:var(--quiet); font-size:13px; }
+.cf-prog-step { color:var(--quiet); font-size:13px; display:flex; align-items:center; gap:8px; }
 .cf-prog-step.on { color:var(--link); }
-.cf-prog-step .ic { width:20px; height:20px; display:grid; place-items:center; border:1px solid var(--line); border-radius:50%; font-size:11px; }
+.cf-prog-step.error { color:#ef4444; font-weight:550; }
+.cf-prog-step .ic { width:20px; height:20px; display:grid; place-items:center; border:1px solid var(--line); border-radius:50%; font-size:11px; flex-shrink:0; }
+.cf-prog-step.error .ic { border-color:#ef4444; color:#ef4444; background:rgba(239,68,68,0.1); }
+.cf-prog-err-ic { font-weight:700; line-height:1; font-size:10px; }
+.cf-prog-errbox {
+  margin-top:16px;
+  padding:12px 14px;
+  border-radius:6px;
+  background:rgba(239,68,68,0.08);
+  border:1px solid rgba(239,68,68,0.25);
+  font-size:13px;
+  line-height:1.5;
+  color:#f87171;
+}
+.cf-prog-errmsg { font-weight:500; }
+.cf-prog-errlink {
+  display:inline-block;
+  margin-top:6px;
+  color:var(--link);
+  text-decoration:underline;
+  font-size:12.5px;
+}
+.cf-prog-errlink:hover { color:var(--foreground); }
+.cf-prog-actions {
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin-top:20px;
+}
+.cf-prog-btn {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 16px;
+  border-radius:5px;
+  font-size:13px;
+  font-weight:550;
+  transition:all .15s ease;
+  cursor:pointer;
+}
+.cf-prog-btn-back {
+  background:var(--background);
+  border:1px solid var(--line);
+  color:var(--foreground);
+}
+.cf-prog-btn-back:hover {
+  border-color:var(--quiet);
+  background:var(--panel);
+}
+.cf-prog-btn-retry {
+  background:var(--link);
+  border:1px solid transparent;
+  color:#fff;
+}
+.cf-prog-btn-retry:hover {
+  opacity:0.9;
+}
 .cf-spin { display:inline-block; width:15px; height:15px; border:2px solid var(--line); border-top-color:var(--link); border-radius:50%; animation:cf-working .8s linear infinite; }
 .cf-spin.sm { width:11px; height:11px; }
 @keyframes cf-working { to { transform:rotate(360deg); } }
