@@ -19,7 +19,6 @@ import { useProductLibraryStore } from "@/lib/stores/product-library-store";
 import { useCharacterStore } from "@/lib/stores/project-store";
 import { getExampleProducts, type ExampleProduct } from "@/lib/examples";
 import { useT, useLocale } from "@/lib/i18n";
-import { ATLAS_KEYS_URL } from "@/lib/atlas-onekey";
 import { formatRelativeTime } from "@/lib/relative-time";
 import { classifyTrendTitle, pickDailyTrend, TREND_CATEGORY_IDS } from "@/lib/trends";
 import type { TrendTopic, TrendCategoryId } from "@/lib/trends";
@@ -67,7 +66,6 @@ export default function StartPage() {
   const t = useT("start");
   const locale = useLocale();
   const { llm } = useSettingsStore();
-  const applyAtlasOneKey = useSettingsStore((s) => s.applyAtlasOneKey);
   const llmReady = llm.apiKey.trim().length > 0;
   // example products follow the UI language
   const examples = getExampleProducts(locale);
@@ -100,10 +98,6 @@ export default function StartPage() {
   // which step of the busy takeover is running (index into busySteps)
   const [stageIdx, setStageIdx] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [needKey, setNeedKey] = useState(false);
-  const [atlasKey, setAtlasKey] = useState("");
-  const [connecting, setConnecting] = useState(false);
-  const [connectError, setConnectError] = useState<string | null>(null);
   const [recent, setRecent] = useState<RecentProject[]>([]);
   const [recentStatus, setRecentStatus] = useState<"loading" | "ready" | "error">("loading");
   const [trends, setTrends] = useState<TrendTopic[]>([]);
@@ -135,7 +129,6 @@ export default function StartPage() {
   const sampleDialog = useRef<HTMLDialogElement>(null);
   const sampleVideo = useRef<HTMLVideoElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-  const keyformRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
   // product-library hand-off: /start?productId=x pre-fills the upload tab, so the
@@ -380,6 +373,7 @@ export default function StartPage() {
   const startTopic = async () => {
     setStageIdx(0);
     setStage(t("stageScript"));
+    if (!llmReady) throw new Error(t("errTopicScript"));
     const res = await fetch("/api/topic/script", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -420,6 +414,7 @@ export default function StartPage() {
 
     setStageIdx(2);
     setStage(t("stageScript"));
+    if (!llmReady) throw new Error(t("errScript"));
     const scriptRes = await fetch("/api/llm/script", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -457,6 +452,7 @@ export default function StartPage() {
     const p = data.product || {};
     setStageIdx(1);
     setStage(t("stageScript"));
+    if (!llmReady) throw new Error(t("errScript"));
     // even if script gen fails, the project exists with product data — the script page offers retry
     await fetch("/api/llm/script", {
       method: "POST",
@@ -495,47 +491,7 @@ export default function StartPage() {
 
   const onStart = () => {
     if (!canStart || busy) return;
-    // no LLM configured: expand the Atlas one-click setup panel inline (no navigation, no loss of filled content)
-    if (!llmReady) {
-      setNeedKey(true);
-      // the panel may be mounting this very tick — defer the scroll until React has committed it to the DOM
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          keyformRef.current?.scrollIntoView({ block: "center", behavior: "smooth" });
-        });
-      });
-      return;
-    }
     runGeneration();
-  };
-
-  // paste an Atlas Key → validate → write full config → immediately continue with generation
-  const connectAtlasAndStart = async () => {
-    const key = atlasKey.trim();
-    if (!key || connecting || busy) return;
-    setConnecting(true);
-    setConnectError(null);
-    try {
-      const res = await fetch("/api/ai/test-provider", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: "atlas-cloud", apiKey: key }),
-      });
-      const data = await res.json().catch(() => ({ status: "unknown" }));
-      // only block on "explicitly invalid"; unknown (network/endpoint uncertainty) passes through and lets generation attempt proceed
-      if (data.status === "invalid") {
-        setConnectError(t("atlasKeyInvalid"));
-        setConnecting(false);
-        return;
-      }
-      applyAtlasOneKey(key);
-      setConnecting(false);
-      setNeedKey(false);
-      await runGeneration();
-    } catch {
-      setConnectError(t("atlasConnectFailed"));
-      setConnecting(false);
-    }
   };
 
   return (
@@ -717,47 +673,22 @@ export default function StartPage() {
             )}
             {genMode === "ai" && <ProductionProfilePicker />}
 
-            {needKey && !llmReady && (
-              <div className="cf-keyform" ref={keyformRef}>
-                <div className="cf-keyhead">
-                  {t("atlasTitle")}
-                  <button type="button" className="cf-keyclose" aria-label={t("atlasDismiss")} title={t("atlasDismiss")} onClick={() => setNeedKey(false)}>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12" /></svg>
-                  </button>
-                </div>
-                <div className="cf-keydesc">
-                  {t("atlasDesc")}{" "}
-                  <a href={ATLAS_KEYS_URL} target="_blank" rel="noreferrer">{t("atlasGetKey")} ↗</a>
-                </div>
-                <div className="cf-keyrow">
-                  <input
-                    className="cf-keyinput"
-                    type="password"
-                    value={atlasKey}
-                    autoFocus
-                    onChange={(e) => setAtlasKey(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") connectAtlasAndStart(); }}
-                    placeholder={t("atlasKeyPlaceholder")}
-                  />
-                  <button className="cf-keybtn" onClick={connectAtlasAndStart} disabled={atlasKey.trim().length === 0 || connecting || busy}>
-                    {connecting ? t("atlasConnecting") : busy ? (stage || t("busyDefault")) : t("atlasConnectStart")}
-                    {!connecting && !busy && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 12h14M13 6l6 6-6 6" /></svg>}
-                  </button>
-                </div>
-                {connectError && <div className="cf-keyerr">{connectError}</div>}
-                <div className="cf-keyalt">
-                  <Link href="/settings?tab=llm">{t("atlasUseOther")}</Link>
-                </div>
-              </div>
-            )}
             <div className="cf-cta-row">
               <button className="cf-cta" onClick={onStart} disabled={!canStart || busy}>
                 {busy ? (stage || t("busyDefault")) : t("ctaStart")}
                 {!busy && <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 12h14M13 6l6 6-6 6" /></svg>}
               </button>
-
             </div>
-            {error && <div className="cf-err">{error}</div>}
+            {error && (
+              <div className="cf-err flex flex-wrap items-center gap-1.5 justify-center">
+                <span>{error}</span>
+                {(!llmReady || error.includes("LLM")) && (
+                  <Link href="/settings?tab=llm" className="underline font-medium hover:text-foreground">
+                    {t("atlasUseOther")} →
+                  </Link>
+                )}
+              </div>
+            )}
               </>
             )}
           </div>
