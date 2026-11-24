@@ -3,14 +3,11 @@ set -e
 
 cd "$(dirname "$0")"
 
-# Ensure local cache directory and symlink exist
-mkdir -p /tmp/clipforge-next
-if [ ! -L ".next_dev" ]; then
-  ln -s /tmp/clipforge-next .next_dev 2>/dev/null || true
+# Clean up any cross-volume symlink which breaks Turbopack and causes infinite HMR watch loops in Webpack
+if [ -L ".next_dev" ]; then
+  rm -f .next_dev
 fi
-if [ ! -L "/tmp/node_modules" ]; then
-  ln -sf "$(pwd)/node_modules" /tmp/node_modules 2>/dev/null || true
-fi
+mkdir -p .next_dev
 
 echo "🚀 Khởi chạy ClipForge tại http://localhost:3003 ..."
 NEXT_DIST_DIR=.next_dev npx next dev --webpack -p 3003
