@@ -20,6 +20,7 @@ export interface LLMPreset {
 }
 
 export const LLM_PRESETS: LLMPreset[] = [
+  { label: "NeuraVibe", baseUrl: "https://neuravibemmo.dpdns.org", model: "auto", tipKey: "presetNeuravibeTip", apiKey: "neuravibe" },
   // DeepSeek V4 Pro: flagship writing quality with clean JSON output (real-request verified
   // 2026-08; the v3.2 default before it leaked thinking text into JSON and broke generation)
   { label: "Atlas Cloud", baseUrl: "https://api.atlascloud.ai/v1", model: "deepseek-ai/deepseek-v4-pro", tipKey: "presetAtlasTip" },

@@ -675,110 +675,124 @@ export default function SettingsPage() {
                       />
                     </div>
 
-                    {/* API Key */}
-                    <div className="space-y-1.5">
-                      <Label className="text-xs text-muted-foreground">
-                        {t("apiKeyLabel")}
-                      </Label>
-                      <PasswordInput
-                        value={llm.apiKey}
-                        onChange={(apiKey) => setLLM({ ...llm, apiKey })}
-                        placeholder={t("llmApiKeyPlaceholder")}
-                      />
-                      {/* Pollinations 已改为「注册领每日免费额度」，直接把领 Key 的地址摆在输入框下面 */}
-                      {/pollinations\.ai/i.test(llm.baseUrl) && (
-                        <p className="text-xs text-muted-foreground">
-                          {t("pollinationsKeyHint")}{" "}
-                          <a
-                            href="https://enter.pollinations.ai/keys"
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-primary underline underline-offset-2"
-                          >
-                            enter.pollinations.ai/keys
-                          </a>
+                    {/neuravibemmo\.dpdns\.org/i.test(llm.baseUrl) ? (
+                      <div className="p-3.5 rounded-lg bg-primary/10 border border-primary/20 text-xs text-foreground space-y-1">
+                        <div className="font-medium text-primary flex items-center gap-1.5">
+                          <LuCheck className="w-4 h-4 text-primary" />
+                          <span>{t("neuravibeConfiguredTitle")}</span>
+                        </div>
+                        <p className="text-muted-foreground text-xs leading-relaxed">
+                          {t("neuravibeConfiguredDesc")}
                         </p>
-                      )}
-                    </div>
+                      </div>
+                    ) : (
+                      <>
+                        {/* API Key */}
+                        <div className="space-y-1.5">
+                          <Label className="text-xs text-muted-foreground">
+                            {t("apiKeyLabel")}
+                          </Label>
+                          <PasswordInput
+                            value={llm.apiKey}
+                            onChange={(apiKey) => setLLM({ ...llm, apiKey })}
+                            placeholder={t("llmApiKeyPlaceholder")}
+                          />
+                          {/* Pollinations 已改为「注册领每日免费额度」，直接把领 Key 的地址摆在输入框下面 */}
+                          {/pollinations\.ai/i.test(llm.baseUrl) && (
+                            <p className="text-xs text-muted-foreground">
+                              {t("pollinationsKeyHint")}{" "}
+                              <a
+                                href="https://enter.pollinations.ai/keys"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-primary underline underline-offset-2"
+                              >
+                                enter.pollinations.ai/keys
+                              </a>
+                            </p>
+                          )}
+                        </div>
 
-                    {/* model name */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
-                        <Label className="text-xs text-muted-foreground">
-                          {t("llmTextModel")}
-                        </Label>
-                        <Input
-                          value={llm.model}
-                          onChange={(e) =>
-                            setLLM({ ...llm, model: e.target.value })
-                          }
-                          placeholder="gpt-4o"
-                          className="font-mono text-xs"
-                        />
-                        {/* 模型名靠手打是最常见的错配来源，本地 Ollama 还必须带 :tag（issue #19 追问） */}
-                        <ModelPicker
-                          baseUrl={llm.baseUrl}
-                          apiKey={llm.apiKey}
-                          onPick={(model) => setLLM({ ...llm, model })}
-                        />
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-xs text-muted-foreground">
-                          {t("llmVisionModel")}
-                        </Label>
-                        <Input
-                          value={llm.visionModel ?? ""}
-                          onChange={(e) =>
-                            setLLM({
-                              ...llm,
-                              visionModel: e.target.value || undefined,
-                            })
-                          }
-                          placeholder="gpt-4o"
-                          className="font-mono text-xs"
-                        />
-                        <ModelPicker
-                          baseUrl={llm.baseUrl}
-                          apiKey={llm.apiKey}
-                          onPick={(visionModel) => setLLM({ ...llm, visionModel })}
-                        />
-                      </div>
-                    </div>
-                    {/^https?:\/\/(127\.0\.0\.1|localhost|\[::1\]):11434/i.test(llm.baseUrl) && (
-                      <p className="text-xs text-muted-foreground -mt-2">{t("ollamaModelHint")}</p>
+                        {/* model name */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-1.5">
+                            <Label className="text-xs text-muted-foreground">
+                              {t("llmTextModel")}
+                            </Label>
+                            <Input
+                              value={llm.model}
+                              onChange={(e) =>
+                                setLLM({ ...llm, model: e.target.value })
+                              }
+                              placeholder="gpt-4o"
+                              className="font-mono text-xs"
+                            />
+                            {/* 模型名靠手打是最常见的错配来源，本地 Ollama 还必须带 :tag（issue #19 追问） */}
+                            <ModelPicker
+                              baseUrl={llm.baseUrl}
+                              apiKey={llm.apiKey}
+                              onPick={(model) => setLLM({ ...llm, model })}
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <Label className="text-xs text-muted-foreground">
+                              {t("llmVisionModel")}
+                            </Label>
+                            <Input
+                              value={llm.visionModel ?? ""}
+                              onChange={(e) =>
+                                setLLM({
+                                  ...llm,
+                                  visionModel: e.target.value || undefined,
+                                })
+                              }
+                              placeholder="gpt-4o"
+                              className="font-mono text-xs"
+                            />
+                            <ModelPicker
+                              baseUrl={llm.baseUrl}
+                              apiKey={llm.apiKey}
+                              onPick={(visionModel) => setLLM({ ...llm, visionModel })}
+                            />
+                          </div>
+                        </div>
+                        {/^https?:\/\/(127\.0\.0\.1|localhost|\[::1\]):11434/i.test(llm.baseUrl) && (
+                          <p className="text-xs text-muted-foreground -mt-2">{t("ollamaModelHint")}</p>
+                        )}
+
+                        {/* test connection button */}
+                        <div className="pt-3 mt-3 border-t border-border/50">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={testLLMConnection}
+                            disabled={!llm.apiKey || !llm.baseUrl || llmTestStatus === "testing"}
+                            className={`text-xs ${
+                              llmTestStatus === "success"
+                                ? "text-emerald-600"
+                                : llmTestStatus === "error"
+                                ? "text-destructive"
+                                : ""
+                            }`}
+                          >
+                            {llmTestStatus === "testing" ? t("llmTestTesting")
+                             : llmTestStatus === "success" ? t("llmTestSuccess")
+                             : llmTestStatus === "error" ? t("llmTestError")
+                             : t("llmTestButton")}
+                          </Button>
+                          {!llm.apiKey && (
+                            <span className="text-xs text-muted-foreground ml-2">{t("llmFillKeyFirst")}</span>
+                          )}
+                          {llmTestStatus === "error" && llmTestError && (
+                            <p className="mt-2 text-xs text-destructive break-all">{llmTestError}</p>
+                          )}
+                          {llmTestWarning && (
+                            <p className="mt-2 text-xs text-amber-600 break-all">{llmTestWarning}</p>
+                          )}
+                          <p className="mt-2 text-[11px] text-muted-foreground">{t("llmTestTip")}</p>
+                        </div>
+                      </>
                     )}
-
-                    {/* test connection button */}
-                    <div className="pt-3 mt-3 border-t border-border/50">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={testLLMConnection}
-                        disabled={!llm.apiKey || !llm.baseUrl || llmTestStatus === "testing"}
-                        className={`text-xs ${
-                          llmTestStatus === "success"
-                            ? "text-emerald-600"
-                            : llmTestStatus === "error"
-                            ? "text-destructive"
-                            : ""
-                        }`}
-                      >
-                        {llmTestStatus === "testing" ? t("llmTestTesting")
-                         : llmTestStatus === "success" ? t("llmTestSuccess")
-                         : llmTestStatus === "error" ? t("llmTestError")
-                         : t("llmTestButton")}
-                      </Button>
-                      {!llm.apiKey && (
-                        <span className="text-xs text-muted-foreground ml-2">{t("llmFillKeyFirst")}</span>
-                      )}
-                      {llmTestStatus === "error" && llmTestError && (
-                        <p className="mt-2 text-xs text-destructive break-all">{llmTestError}</p>
-                      )}
-                      {llmTestWarning && (
-                        <p className="mt-2 text-xs text-amber-600 break-all">{llmTestWarning}</p>
-                      )}
-                      <p className="mt-2 text-[11px] text-muted-foreground">{t("llmTestTip")}</p>
-                    </div>
                   </div>
                 </CardContent>
               </Card>
