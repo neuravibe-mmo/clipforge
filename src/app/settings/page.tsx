@@ -2,6 +2,7 @@
 
 import { useModelCatalog } from "@/lib/hooks/use-model-catalog";
 import { ModelCatalogStatus } from "@/components/model-catalog-status";
+import { LanguageToggle } from "@/components/language-toggle";
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -425,12 +426,22 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen grid-bg">
       <main className="mx-auto max-w-4xl px-6 py-10">
-        {/* page title */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold tracking-tight">{t("pageTitle")}</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            {t("pageSubtitle")}
-          </p>
+        {/* page title & language dropdown */}
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">{t("pageTitle")}</h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              {t("pageSubtitle")}
+            </p>
+          </div>
+          <div className="self-start sm:self-auto">
+            <LanguageToggle
+              side="bottom"
+              align="end"
+              showChevron
+              className="h-9 px-3 border border-border/80 bg-card hover:bg-accent/50 rounded-lg text-xs font-medium shadow-xs whitespace-nowrap justify-between gap-3 min-w-[140px]"
+            />
+          </div>
         </div>
 
         {/* configuration status banner: surfaces missing setup right at the top (the footer summary is easy to miss) */}

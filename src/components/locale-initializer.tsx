@@ -16,10 +16,19 @@ export function LocaleInitializer() {
 
   // auto-detect from system language (do not override if the user has manually selected)
   useEffect(() => {
-    const { localeSource, applyAutoLocale } = useSettingsStore.getState();
-    // only follow system language when the user has not manually chosen (auto, or field absent in older persisted state)
-    if (localeSource !== "user") {
-      applyAutoLocale(detectBrowserLocale());
+    const apply = () => {
+      const { localeSource, applyAutoLocale } = useSettingsStore.getState();
+      // only follow system language when the user has not manually chosen (auto, or field absent in older persisted state)
+      if (localeSource !== "user") {
+        applyAutoLocale(detectBrowserLocale());
+      }
+    };
+
+    if (useSettingsStore.persist?.hasHydrated?.()) {
+      apply();
+    } else {
+      const unsub = useSettingsStore.persist?.onFinishHydration?.(apply);
+      return () => unsub?.();
     }
   }, []);
 

@@ -220,9 +220,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <NavIcon name="gear" />
             {!collapsed && t("settings")}
           </Link>
-          <div className={`flex items-center ${collapsed ? "justify-center" : "justify-between px-1.5"}`}>
-            {!collapsed && <LanguageToggle />}
-            {!collapsed && themeButton}
+          <div className={`flex items-center ${collapsed ? "flex-col gap-2 justify-center py-1" : "justify-between px-1.5"}`}>
+            <LanguageToggle
+              collapsed={collapsed}
+              side={collapsed ? "right" : "top"}
+              align={collapsed ? "end" : "start"}
+            />
+            {themeButton}
             <button
               type="button"
               onClick={toggleCollapsed}
@@ -246,7 +250,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-1">
             <TaskCenter collapsed />
             {themeButton}
-            <LanguageToggle />
+            <LanguageToggle side="bottom" align="end" />
             <DropdownMenu>
               <DropdownMenuTrigger
                 aria-label={t("navMenu")}
